@@ -85,7 +85,8 @@ theorem findCollisionAux_sound [BEq α] [LawfulBEq α]
   split at found
   · rename_i hi
     split at found
-    · grind
+    · rename_i hk
+      exact ⟨i, hi, Nat.le_refl i, (eq_of_beq hk).symm, Option.some.inj found⟩
     · obtain ⟨j, hj, hij, hk, hv⟩ :=
         findCollisionAux_sound keys vals hsz (i + 1) key value found
       exact ⟨j, hj, by omega, hk, hv⟩
@@ -140,10 +141,18 @@ theorem findCollisionAux_eq_none_iff [BEq α] [LawfulBEq α]
   split
   · rename_i hi
     split
-    · grind
-    · rw [findCollisionAux_eq_none_iff keys vals hsz (i + 1) key]
-      grind
-  · grind
+    · rename_i hk
+      exact ⟨fun h => (nomatch h), fun h => absurd (eq_of_beq hk).symm (h i hi (Nat.le_refl i))⟩
+    · rename_i hk
+      rw [findCollisionAux_eq_none_iff keys vals hsz (i + 1) key]
+      refine ⟨fun h j hj hij => ?_, fun h j hj hij => h j hj (by omega)⟩
+      if hji : j = i then
+        subst hji
+        exact fun he => hk (beq_iff_eq.mpr he.symm)
+      else
+        exact h j hj (by omega)
+  · rename_i hi
+    exact ⟨fun _ j hj hij => absurd (Nat.lt_of_le_of_lt hij hj) hi, fun _ => rfl⟩
 termination_by keys.size - i
 
 /-- Every stored key has a lookup result under routing alone. Duplicate keys may

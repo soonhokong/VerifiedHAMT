@@ -116,7 +116,6 @@ theorem insertNode_unique [BEq α] [LawfulBEq α] [Hashable α] (levels : Nat)
       obtain ⟨node, hb⟩ := b
       cases hb with
       | mk keys' =>
-        simp only [getCollisionNodeSize]
         split
         · exact ub
         · exact rebuild_unique (insertNode levels (offset + shift)) offset

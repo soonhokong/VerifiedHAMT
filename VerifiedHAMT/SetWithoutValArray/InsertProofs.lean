@@ -136,7 +136,6 @@ theorem insertNode_wf_mem [BEq α] [LawfulBEq α] [Hashable α] (levels : Nat)
       obtain ⟨node, hb⟩ := b
       cases hb with
       | mk keys' =>
-        simp only [getCollisionNodeSize]
         split
         · exact ⟨.collision _ _, hm⟩
         · have rebuilt := rebuild_wf_mem (insertNode levels (offset + shift)) offset childSpec
